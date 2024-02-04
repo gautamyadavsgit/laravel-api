@@ -18,9 +18,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('contact')->nullable();
             $table->text('address')->nullable();
-            $table->boolean('status')->default(1)->comment('0:deactive,1:Active');
             $table->string('zipcode')->nullable();
             $table->string('password');
+            $table->boolean('status')->default(1)->comment('0:deactive,1:Active');
             $table->rememberToken();
             $table->timestamps();
         });
