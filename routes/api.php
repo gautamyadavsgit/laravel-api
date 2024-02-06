@@ -19,3 +19,4 @@ use App\Http\Controllers\Api\UserController;
 //     return $request->user();
 // });
 Route::resource('users', UserController::class);
+Route::patch('users/change-password/{id}',[UserController::class,'change_password']);
