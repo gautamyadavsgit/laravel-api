@@ -54,9 +54,10 @@ class UserController extends Controller
         } else {
             DB::beginTransaction();
             try {
-                User::create($validator->validated());
+                $user = User::create($validator->validated());
+                $token = $user->createToken('auth_token');
                 DB::commit();
-                return response()->json(['success' => 'User Created Successfully'], 201);
+                return response()->json(['success' => 'User Created Successfully','token' => $token], 201);
             } catch (Exception $e) {
                 DB::rollBack();
                 return response()->json($e, 500);
@@ -135,12 +136,12 @@ class UserController extends Controller
     public function change_password(Request $request, string $id)
     {
         //  dd($request);
-        $validatedData = Validator::make($request->all(),[
+        $validatedData = Validator::make($request->all(), [
             'old_password' => 'required',
             'password' => 'required|string',
             'confirmed_password' => 'required_if:password,!=,null|string|same:password',
         ]);
-        if($validatedData->fails()){
+        if ($validatedData->fails()) {
             return response()->json($validatedData->messages(), 400);
         }
         DB::beginTransaction();
@@ -148,11 +149,11 @@ class UserController extends Controller
             $user = User::findOrfail($id);
             // dd($request->all());
             // dd($request->input('old_password'));
-            if(Hash::check($request->input('old_password'),$user->password)){
+            if (Hash::check($request->input('old_password'), $user->password)) {
                 $user->update(['password' => $request->input('password')]);
                 DB::commit();
                 return response()->json(['Success' => 'User update successfully']);
-            }else{
+            } else {
                 return response()->json(['ERROR' => 'password not match']);
 
             }
